@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI 图形设计与模版编辑平台</title>
+    <!-- 主样式文件，所有布局与主题样式均在此定义 -->
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand__logo">AI DESIGN LAB</span>
+        <span class="brand__tagline">所见即所得的模版编辑工具</span>
+      </div>
+      <nav class="header-actions">
+        <button class="btn btn--ghost" id="toggleGridBtn">切换网格</button>
+        <button class="btn btn--ghost" id="toggleGuidesBtn">辅助线</button>
+        <button class="btn btn--primary" id="exportJsonBtn">导出模版 JSON</button>
+      </nav>
+    </header>
+
+    <main class="app-layout">
+      <!-- 左侧模版与素材面板 -->
+      <aside class="panel panel--left" id="leftPanel">
+        <section class="panel-section" id="templateSection">
+          <header class="panel-section__header">
+            <h2>模版库</h2>
+            <select id="templateFilter" class="input input--select">
+              <option value="all">全部分类</option>
+            </select>
+          </header>
+          <div class="template-grid" id="templateList"></div>
+        </section>
+
+        <section class="panel-section" id="assetSection">
+          <header class="panel-section__header">
+            <h2>素材与贴纸</h2>
+          </header>
+          <div class="asset-list" id="assetList"></div>
+        </section>
+      </aside>
+
+      <!-- 中间画布区域 -->
+      <section class="canvas-wrapper">
+        <header class="canvas-toolbar" id="canvasToolbar"></header>
+        <div class="canvas-stage" id="canvasStage">
+          <!-- 元素在运行时由 JavaScript 注入 -->
+          <div class="canvas-stage__grid" id="canvasGrid"></div>
+          <div class="canvas-stage__guides" id="canvasGuides"></div>
+        </div>
+        <footer class="canvas-footer">
+          <button class="btn btn--ghost" id="addTextBtn">添加标题文字</button>
+          <button class="btn btn--ghost" id="addSubTextBtn">添加正文文字</button>
+          <button class="btn btn--ghost" id="addShapeBtn">添加彩色块</button>
+          <button class="btn btn--ghost" id="addImageBtn">添加占位图片</button>
+        </footer>
+      </section>
+
+      <!-- 右侧图层与样式调整面板 -->
+      <aside class="panel panel--right" id="rightPanel">
+        <section class="panel-section" id="layerSection">
+          <header class="panel-section__header">
+            <h2>图层结构</h2>
+          </header>
+          <ul class="layer-list" id="layerList"></ul>
+        </section>
+
+        <section class="panel-section" id="propertySection">
+          <header class="panel-section__header">
+            <h2>样式设置</h2>
+          </header>
+          <div class="property-group">
+            <label class="property-label" for="backgroundColorInput">画布背景色</label>
+            <input type="color" id="backgroundColorInput" class="input input--color" />
+          </div>
+
+          <div class="property-group">
+            <label class="property-label" for="fontFamilyInput">字体</label>
+            <select id="fontFamilyInput" class="input input--select">
+              <option value="'Noto Sans SC', sans-serif">默认无衬线</option>
+              <option value="'ZCOOL KuaiLe', cursive">快乐体</option>
+              <option value="'Long Cang', cursive">手写体</option>
+              <option value="'Roboto', sans-serif">Roboto</option>
+            </select>
+          </div>
+
+          <div class="property-group">
+            <label class="property-label" for="fontSizeInput">字号（px）</label>
+            <input type="number" id="fontSizeInput" class="input" min="12" max="120" step="1" />
+          </div>
+
+          <div class="property-group">
+            <label class="property-label" for="fontColorInput">字体颜色</label>
+            <input type="color" id="fontColorInput" class="input input--color" />
+          </div>
+
+          <div class="property-group">
+            <label class="property-label" for="fontWeightInput">字重</label>
+            <input type="range" id="fontWeightInput" class="input input--range" min="100" max="900" step="100" />
+          </div>
+
+          <div class="property-group">
+            <label class="property-label" for="lineHeightInput">行高</label>
+            <input type="number" id="lineHeightInput" class="input" min="1" max="3" step="0.1" />
+          </div>
+
+          <div class="property-group">
+            <label class="property-label" for="letterSpacingInput">字间距</label>
+            <input type="number" id="letterSpacingInput" class="input" min="0" max="10" step="0.5" />
+          </div>
+
+          <div class="property-group">
+            <label class="property-label">对齐方式</label>
+            <div class="button-group" id="textAlignGroup">
+              <button class="btn btn--ghost" data-align="left">左对齐</button>
+              <button class="btn btn--ghost" data-align="center">居中</button>
+              <button class="btn btn--ghost" data-align="right">右对齐</button>
+            </div>
+          </div>
+
+          <div class="property-group property-group--danger">
+            <button class="btn btn--danger" id="deleteLayerBtn">删除选中元素</button>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <!-- 模块化 JavaScript 入口文件 -->
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>
