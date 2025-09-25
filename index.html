@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI 图形设计与模版编辑平台</title>
+    <!-- 主样式文件，所有布局与主题样式均在此定义 -->
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand__logo">AI DESIGN LAB</span>
+        <span class="brand__tagline">所见即所得的模版编辑工具</span>
+      </div>
+      <nav class="header-actions">
+        <button class="btn btn--ghost" id="openOnboardingBtn">新手教程</button>
+        <button class="btn btn--ghost" id="toggleGridBtn">切换网格</button>
+        <button class="btn btn--ghost" id="toggleGuidesBtn">辅助线</button>
+        <button class="btn btn--primary" id="exportJsonBtn">导出模版 JSON</button>
+      </nav>
+    </header>
+
+    <main class="app-layout">
+      <!-- 左侧模版与素材面板 -->
+      <aside class="panel panel--left" id="leftPanel">
+        <section class="panel-section" id="templateSection">
+          <header class="panel-section__header">
+            <h2>模版库</h2>
+            <select id="templateFilter" class="input input--select">
+              <option value="all">全部分类</option>
+            </select>
+          </header>
+          <div class="template-grid" id="templateList"></div>
+        </section>
+
+        <section class="panel-section" id="assetSection">
+          <header class="panel-section__header">
+            <h2>素材与贴纸</h2>
+          </header>
+          <div class="asset-list" id="assetList"></div>
+        </section>
+      </aside>
+
+      <!-- 中间画布区域 -->
+      <section class="canvas-wrapper">
+        <header class="canvas-toolbar" id="canvasToolbar"></header>
+        <div class="canvas-stage" id="canvasStage">
+          <!-- 元素在运行时由 JavaScript 注入 -->
+          <div class="canvas-stage__grid" id="canvasGrid"></div>
+          <div class="canvas-stage__guides" id="canvasGuides"></div>
+        </div>
+        <footer class="canvas-footer">
+          <button class="btn btn--ghost" id="addTextBtn">添加标题文字</button>
+          <button class="btn btn--ghost" id="addSubTextBtn">添加正文文字</button>
+          <button class="btn btn--ghost" id="addShapeBtn">添加彩色块</button>
+          <button class="btn btn--ghost" id="addImageBtn">添加占位图片</button>
+        </footer>
+      </section>
+
+      <!-- 右侧图层与样式调整面板 -->
+      <aside class="panel panel--right" id="rightPanel">
+        <section class="panel-section" id="layerSection">
+          <header class="panel-section__header">
+            <h2>图层结构</h2>
+          </header>
+          <ul class="layer-list" id="layerList"></ul>
+        </section>
+
+        <section class="panel-section" id="propertySection">
+          <header class="panel-section__header">
+            <h2>样式设置</h2>
+          </header>
+          <div class="property-group">
+            <label class="property-label" for="backgroundColorInput">画布背景色</label>
+            <input type="color" id="backgroundColorInput" class="input input--color" />
+          </div>
+
+          <div class="property-group">
+            <label class="property-label" for="fontFamilyInput">字体</label>
+            <select id="fontFamilyInput" class="input input--select">
+              <option value="'Noto Sans SC', sans-serif">默认无衬线</option>
+              <option value="'ZCOOL KuaiLe', cursive">快乐体</option>
+              <option value="'Long Cang', cursive">手写体</option>
+              <option value="'Roboto', sans-serif">Roboto</option>
+            </select>
+          </div>
+
+          <div class="property-group">
+            <label class="property-label" for="fontSizeInput">字号（px）</label>
+            <input type="number" id="fontSizeInput" class="input" min="12" max="120" step="1" />
+          </div>
+
+          <div class="property-group">
+            <label class="property-label" for="fontColorInput">字体颜色</label>
+            <input type="color" id="fontColorInput" class="input input--color" />
+          </div>
+
+          <div class="property-group">
+            <label class="property-label" for="fontWeightInput">字重</label>
+            <input type="range" id="fontWeightInput" class="input input--range" min="100" max="900" step="100" />
+          </div>
+
+          <div class="property-group">
+            <label class="property-label" for="lineHeightInput">行高</label>
+            <input type="number" id="lineHeightInput" class="input" min="1" max="3" step="0.1" />
+          </div>
+
+          <div class="property-group">
+            <label class="property-label" for="letterSpacingInput">字间距</label>
+            <input type="number" id="letterSpacingInput" class="input" min="0" max="10" step="0.5" />
+          </div>
+
+          <div class="property-group">
+            <label class="property-label">对齐方式</label>
+            <div class="button-group" id="textAlignGroup">
+              <button class="btn btn--ghost" data-align="left">左对齐</button>
+              <button class="btn btn--ghost" data-align="center">居中</button>
+              <button class="btn btn--ghost" data-align="right">右对齐</button>
+            </div>
+          </div>
+
+          <div class="property-group property-group--danger">
+            <button class="btn btn--danger" id="deleteLayerBtn">删除选中元素</button>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <!-- 新手引导浮层：向完全没有经验的用户解释下一步该做什么 -->
+    <div class="onboarding" id="onboardingBackdrop" aria-hidden="true">
+      <div class="onboarding__dialog" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle">
+        <header class="onboarding__header">
+          <div>
+            <p class="onboarding__eyebrow">欢迎第一次体验</p>
+            <h2 class="onboarding__title" id="onboardingTitle">3 步完成你的第一张海报</h2>
+          </div>
+          <button class="onboarding__close" id="closeOnboardingBtn" aria-label="关闭教程">×</button>
+        </header>
+
+        <ol class="onboarding__steps" id="onboardingSteps">
+          <li class="onboarding__step is-active" data-step="0">
+            <h3>① 从左侧模版库挑选喜欢的样式</h3>
+            <p>点击左侧卡片即可加载模版，初学者无需从零开始。可以先浏览分类了解不同场景。</p>
+            <div class="onboarding__hint">小技巧：模版加载后，画布会自动选中第一个元素方便编辑。</div>
+          </li>
+          <li class="onboarding__step" data-step="1">
+            <h3>② 在中间画布直接点选并修改内容</h3>
+            <p>双击文字即可输入自己的标题、活动信息，拖拽元素调整位置，底部按钮还能快速添加新的文字或图片。</p>
+            <div class="onboarding__hint">需要参考线时，试试顶部“切换网格”和“辅助线”按钮。</div>
+          </li>
+          <li class="onboarding__step" data-step="2">
+            <h3>③ 使用右侧面板调整样式与图层</h3>
+            <p>右侧可以改字体、颜色、行距，还能拖动图层顺序。满意后点击“导出模版 JSON”保存设计配置。</p>
+            <div class="onboarding__hint">若误操作，可在图层列表里重新选择或删除元素。</div>
+          </li>
+        </ol>
+
+        <footer class="onboarding__footer">
+          <button class="btn btn--ghost" id="onboardingPrevBtn">上一步</button>
+          <button class="btn btn--primary" id="onboardingNextBtn">下一步</button>
+          <button class="btn btn--ghost" id="onboardingSkipBtn">直接开始创作</button>
+        </footer>
+      </div>
+    </div>
+
+    <!-- 模块化 JavaScript 入口文件 -->
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>
